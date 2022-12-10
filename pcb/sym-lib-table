@@ -1,3 +1,4 @@
 (sym_lib_table
-  (lib (name Thermostat1-rescue)(type Legacy)(uri ${KIPRJMOD}/Thermostat1-rescue.lib)(options "")(descr ""))
+  (lib (name "Thermostat1-rescue")(type "Legacy")(uri "${KIPRJMOD}/Thermostat1-rescue.lib")(options "")(descr ""))
+  (lib (name "Espressif")(type "KiCad")(uri "C:/Users/luko/Downloads/kicad-libraries-main/kicad-libraries-main/libraries/Espressif.kicad_sym")(options "")(descr ""))
 )
