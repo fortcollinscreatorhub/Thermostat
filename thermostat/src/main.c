@@ -15,6 +15,7 @@
 #include "driver/gpio.h"
 #include "driver/i2c.h"
 #include "esp_log.h"
+#include "esp_err.h"
 #include "sdkconfig.h"
 #include "rom/uart.h"
 
@@ -105,6 +106,8 @@ const int MQTT_CONNECTED_BIT = BIT1;
 #define MIN_ANTICIPATION 0.0
 #define MAX_CYCLES_PER_HOUR 10
 #define MIN_CYCLES_PER_HOUR 0 // Off
+#define MAX_TEMP_OFFSET 10.0
+#define MIN_TEMP_OFFSET 0
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // No user-servicable parts below
@@ -128,8 +131,9 @@ const int MQTT_CONNECTED_BIT = BIT1;
 #define CYCLE_LIMIT_ADDR      (OVERRIDE_MINUTES_ADDR + sizeof(int))
 #define CYCLES_PER_HOUR_ADDR  (CYCLE_LIMIT_ADDR      + sizeof(bool))
 #define ANTICIPATION_ADDR     (CYCLES_PER_HOUR_ADDR  + sizeof(int))
+#define TEMPOFFSET_ADDR       (ANTICIPATION_ADDR     + sizeof(int))
 
-float curr_temp = 0.0;                   // current temperature
+float curr_temp = 70.0;                   // current temperature
 int curr_set_point = 55;                 // setpoint temperature based on override or not
 long override_start_time = 0;   // time (in millis) since override button was pressed
 long override_finish_time = 0;  // time (in millis) when override will finish
@@ -147,6 +151,7 @@ int override_minutes; // number of minutes an override will last
 bool cycle_limit;     // enable cycles per hour limit
 int cycles_per_hour;  // max number of cycles per hour
 float anticipation;   // hysteresis degrees
+float temp_offset;    // temperature sensor offset
 QueueHandle_t button_events;
 
 enum TempMode {
@@ -179,6 +184,7 @@ i2c_lcd1602_info_t * lcd_info;
   char*  str_cycle_limit = "CYCLE_LIMIT";
   char*  str_cycles_per_hour = "CYCLES_PER_HOUR";
   char*  str_anticipation = "ANTICIPATION";
+  char*  str_temp_offset = " TEMP_OFFSET";
 
 
 // list of access points to try
@@ -765,7 +771,8 @@ enum SetMode {
   SetOverrideTemp,
   SetOverrideTime,
   SetAnticipation,
-  SetCyclesPerHour
+  SetCyclesPerHour,
+  SetTempOffset
 } set_mode;
 
 DeviceAddress tempSensors[1];
@@ -829,7 +836,7 @@ void setup()
   // initialize temp sensor
   ds18b20_init(TEMP_BUS);
   getTempAddresses(tempSensors);
-  ds18b20_setResolution(tempSensors,1,10);
+  ds18b20_setResolution(tempSensors,1,12);
 
   // initialize variables
   temp_mode = Setback;
@@ -883,29 +890,64 @@ void setup()
 	printf("NVS open OK\n");
 
 	int32_t value = 0;
+  float fvalue = 0.0;
+  char* buff[128];
+  
+    
 
-    nvs_get_i32(my_handle, str_setback, &value);
+    err = nvs_get_i32(my_handle, str_setback, &value);
+    if (err != ESP_OK){
+      value = 0;
+    }
 	  setback_temp = value;
     value = 0;
 
-    nvs_get_i32(my_handle, str_override, &value);
+    err = nvs_get_i32(my_handle, str_override, &value);
+    if (err != ESP_OK){
+      value = 0;
+    }
 	  override_temp = value;
     value = 0;
     
-    nvs_get_i32(my_handle, str_min_override, &value);
+    err = nvs_get_i32(my_handle, str_min_override, &value);
+    if (err != ESP_OK){
+      value = 0;
+    }
 	  override_minutes = value;
     value = 0;
 
-    nvs_get_i32(my_handle, str_cycle_limit, &value);
+    err = nvs_get_i32(my_handle, str_cycle_limit, &value);
+    if (err != ESP_OK){
+      value = 0;
+    }
 	  cycle_limit = value;
     value = 0;
 
-    nvs_get_i32(my_handle, str_cycles_per_hour, &value);
+    err = nvs_get_i32(my_handle, str_cycles_per_hour, &value);
+    if (err != ESP_OK){
+      value = 0;
+    }
 	  cycles_per_hour = value;
     value = 0;
 
-    nvs_get_i32(my_handle, str_anticipation, &value);
+    err = nvs_get_i32(my_handle, str_anticipation, &value);
+    if (err != ESP_OK){
+      value = 0;
+    }
 	  anticipation = value;
+
+
+    size_t required_size;
+    err = nvs_get_str(my_handle, str_temp_offset, NULL, &required_size);
+    if (err != ESP_OK) {
+      printf("\nError Temperature Override to get string size! (%04X)\n", err);
+      temp_offset = 0.0;
+    } else {
+      char* temp_offset_len = malloc(required_size);
+      nvs_get_str(my_handle, str_temp_offset, temp_offset_len, &required_size);
+    
+      temp_offset = atof(temp_offset_len);
+    }
 
   
   bool upflag = false;
@@ -972,7 +1014,9 @@ void UpdateEEPROM() {
   bool old_cycle_limit;
   int old_cycles_per_hour;
   float old_anticipation;
+  float old_temp_offset;
   int value;
+  char* buff[128];
 
 
 
@@ -989,6 +1033,14 @@ void UpdateEEPROM() {
   old_cycles_per_hour = value;
   nvs_get_i32(my_handle, str_anticipation, &value);
   old_anticipation = value;
+
+  size_t required_size;
+  nvs_get_str(my_handle, str_temp_offset, NULL, &required_size);
+  char* temp_offset_len = malloc(required_size);
+  nvs_get_str(my_handle, str_temp_offset, temp_offset_len, &required_size);
+    
+  old_temp_offset = atof(temp_offset_len);
+  
  
 
 
@@ -999,6 +1051,11 @@ void UpdateEEPROM() {
   if (cycle_limit != old_cycle_limit)           nvs_set_i32(my_handle, str_cycle_limit, cycle_limit);
   if (cycles_per_hour != old_cycles_per_hour)   nvs_set_i32(my_handle, str_cycles_per_hour, cycles_per_hour);
   if (anticipation != old_anticipation)         nvs_set_i32(my_handle, str_anticipation, anticipation);
+  if (temp_offset != old_temp_offset) {
+    ftoa(temp_offset, buff,1);
+    nvs_set_str(my_handle, str_temp_offset, buff);
+    }
+  
 
     nvs_commit(my_handle);
 
@@ -1111,8 +1168,7 @@ void ModeControl() {
 
     case SetCyclesPerHour:
       if (set_pressed) {
-        set_mode = Run;
-        UpdateEEPROM();
+        set_mode = SetTempOffset;
       }
       if (up_pressed) {
         if (cycles_per_hour < MAX_CYCLES_PER_HOUR) {
@@ -1129,6 +1185,25 @@ void ModeControl() {
         }
       }
       cycle_limit = (cycles_per_hour != MIN_CYCLES_PER_HOUR);
+      break;
+
+      case SetTempOffset:
+      if (set_pressed) {
+        set_mode = Run;
+        UpdateEEPROM();
+      }
+      if (up_pressed) {
+        if (temp_offset < MAX_TEMP_OFFSET) {
+          temp_offset += 0.5;
+        } 
+      }
+      if (down_pressed) {
+        if (temp_offset > MIN_TEMP_OFFSET) {
+          temp_offset -= 0.5;
+        } 
+        if (temp_offset< MIN_TEMP_OFFSET) temp_offset = MIN_TEMP_OFFSET;
+      }
+      
       break;
 
     default:
@@ -1152,17 +1227,22 @@ void TempControl() {
   // pressing a button and it taking effect
   //
 
-   if ((set_mode == Run) && ((frame % 100) == 0)) {
-    ds18b20_requestTemperatures();
-		curr_temp = ds18b20_getTempF((DeviceAddress *)tempSensors[0]);
+   if ((set_mode == Run) && ((frame % 1) == 0)) {
+    float temp_curr_temp;
 
-    while ( (curr_temp < 0) || (curr_temp > 125)){
-      ds18b20_requestTemperatures();
-		  curr_temp = ds18b20_getTempF((DeviceAddress *)tempSensors[0]);
+   
+    ds18b20_requestTemperatures();
+		temp_curr_temp = ds18b20_getTempF((DeviceAddress *)tempSensors[0]);
+    printf("reading temp %f\n",temp_curr_temp);
+
+    if ( fabs(temp_curr_temp - DEVICE_DISCONNECTED_F) > 1.0e-5 ){ // ignore bad reading
+      
+		  curr_temp = temp_curr_temp;
+      curr_temp -=temp_offset;
+
     }
 
     
-
    }
 
   // see if the override has timed out
@@ -1299,6 +1379,15 @@ void Display() {
       } else {
         i2c_lcd1602_write_string(lcd_info,"-               ");
       }
+      break;
+    
+    case SetTempOffset:
+      i2c_lcd1602_write_string(lcd_info,"Temp Offset:   ");
+      i2c_lcd1602_move_cursor(lcd_info, 0, 1);
+      printf("float %f", temp_offset);
+      ftoa(temp_offset, buffer, 1);
+      i2c_lcd1602_write_string(lcd_info,buffer);
+      i2c_lcd1602_write_string(lcd_info,"             ");
       break;
 
     default:
