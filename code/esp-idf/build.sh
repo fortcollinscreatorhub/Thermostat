@@ -11,6 +11,9 @@ docker_opts=()
 docker_opts+=(-it)
 docker_opts+=(--rm)
 docker_opts+=(-u "$(id -u):$(id -g)")
+for gid in $(id -G); do
+    docker_opts+=(--group-add "${gid}")
+done
 docker_opts+=(-v "${HOME}:${HOME}")
 docker_opts+=(-e "HOME=${HOME}")
 docker_opts+=(-v "$(pwd):$(pwd)")
