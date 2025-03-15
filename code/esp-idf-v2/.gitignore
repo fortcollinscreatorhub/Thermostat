@@ -1,0 +1,9 @@
+# Copyright 2024-2025 Stephen Warren <swarren@wwwdotorg.org>
+# SPDX-License-Identifier: MIT
+
+.vscode/
+build/
+dependencies.lock
+managed_components/
+sdkconfig
+sdkconfig.old

@@ -1,0 +1,8 @@
+# Copyright 2025 Stephen Warren <swarren@wwwdotorg.org>
+# SPDX-License-Identifier: MIT
+
+dependencies:
+  idf:
+    version: '>=5.0'
+  espressif/button: '^4.1.0'
+  espressif/ds18b20: '^0.1.2'
