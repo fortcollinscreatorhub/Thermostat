@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<!--
+Copyright 2024-2025 Stephen Warren <swarren@wwwdotorg.org>
+SPDX-License-Identifier: MIT
+-->
+<html>
+<head>
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+    <style>
+        body {
+            background: #000000;
+            color: #ffffff;
+            text-align: center;
+            font-family: monospace;
+            font-weight: bold;
+            font-size: 1em;
+        }
+
+        p.hn, p.pn {
+            /* p that is a host name or page name */
+            margin: 1rem;
+            margin-top: 2rem;
+            border: 0rem;
+            padding: 0rem;
+            width: 100%;
+            font-size: 2rem;
+        }
+
+        .bs {
+            /* buttons */
+            display: inline-block;
+            margin: 0rem;
+            border: 0rem;
+            padding: 0rem;
+            min-width: 30rem;
+        }
+
+        .b {
+            /* button */
+            background: #3da1c6;
+            color: #ffffff;
+            margin: 0rem;
+            margin-top: 1rem;
+            border: 0.25rem solid #3da1c6;
+            padding: 1rem 0.25rem;
+            width: 100%;
+        }
+
+        .bc {
+            /* button caution */
+            background: #cf5928;
+            border-color: #cf5928;
+        }
+
+        a {
+            box-sizing: border-box;
+        }
+
+        a.b {
+            /* a that is a button */
+            text-decoration: 0rem;
+            color: inherit;
+            display: block;
+        }
+
+        .h:hover {
+            border-color: white;
+        }
+
+        form {
+            margin: 0rem;
+            border: 0rem;
+            padding: 0rem;
+            width: 100%;
+        }
+
+        label {
+            display: block;
+            margin: 0rem;
+            margin-top: 1rem;
+            border: 0rem;
+            padding: 0rem;
+            width: 100%;
+            text-align: left;
+        }
+
+        input {
+            box-sizing: border-box;
+            margin: 0rem;
+            margin-top: 0.25rem;
+            border: 0.25rem solid white;
+            padding: 0.25rem 0.25rem;
+            width: 100%;
+        }
+
+        button {
+            text-align: center;
+            font-family: monospace;
+            font-weight: bold;
+            font-size: 1em;
+        }
+    </style>
+</head>
+<body>
+    <p class="t">rfid-v2-test - Configuration</p>
+    <div class="bs">
+        <a class="b h" href="/foo">
+            Configuration
+        </a>
+        <a class="b h">
+            Home
+        </a>
+        <form action="/foo" method="post">
+            <label for="x">Some value:</label>
+            <input name="x" type="text" value="xxxxx" />
+            <label for="y">Another value:</label>
+            <input name="y" type="text" value="yyyyy" />
+            <button class="b h">
+                Save
+            </button>
+        </form>
+        <form action="/foo" method="post">
+            <button class="b h">
+                Reset
+            </button>
+        </form>
+    </div>
+</body>
+</html>

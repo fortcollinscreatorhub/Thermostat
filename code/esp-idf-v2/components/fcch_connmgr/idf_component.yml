@@ -1,0 +1,7 @@
+# Copyright 2024-2025 Stephen Warren <swarren@wwwdotorg.org>
+# SPDX-License-Identifier: MIT
+
+dependencies:
+    espressif/mdns: "^1.0.3"
+    idf:
+        version: ">=5.0"
