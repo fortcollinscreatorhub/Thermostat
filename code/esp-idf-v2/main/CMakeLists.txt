@@ -3,5 +3,9 @@
 
 idf_component_register(
     SRCS
+        buttons.cpp
+        lcd.cpp
         main.cpp
+        mqtt.cpp
+        thermometer.cpp
 )

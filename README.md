@@ -16,8 +16,12 @@ v2 uses an ESP32. The PCB design is found in directory [pcb/](pcb/). File
 
 v1 hardware uses the code in directory [code/arduino-v1/](code/arduino-v1/).
 
-v2 hardware can use either of two software stacks:
+v2 hardware can use any of following software stacks:
 * A port of the older Arduino code. Found in directory
 [code/arduino-esp32/](code/arduino-esp32/).
 * WiFi-/MQTT-capable software built using the ESP-IDF framework. Found in
 directory [code/esp-idf](code/esp-idf). This version is currently deployed.
+* Updated WiFi-/MQTT-capable software built using the ESP-IDF framework, plus
+the FCCH "connection manager" component which provides a permanently enabled
+password-protected web admin interface. Found in directory
+[code/esp-idf-v2](code/esp-idf-v2). This version is not yet deployed.
