@@ -208,9 +208,9 @@ static esp_err_t _write_to_expander(const i2c_lcd1602_info_t * i2c_lcd1602_info,
 static esp_err_t _strobe_enable(const i2c_lcd1602_info_t * i2c_lcd1602_info, uint8_t data)
 {
     esp_err_t err1 = _write_to_expander(i2c_lcd1602_info, data | FLAG_ENABLE);
-    ets_delay_us(DELAY_ENABLE_PULSE_WIDTH);
+    esp_rom_delay_us(DELAY_ENABLE_PULSE_WIDTH);
     esp_err_t err2 = _write_to_expander(i2c_lcd1602_info, data & ~FLAG_ENABLE);
-    ets_delay_us(DELAY_ENABLE_PULSE_SETTLE);
+    esp_rom_delay_us(DELAY_ENABLE_PULSE_SETTLE);
     return err1 ? err1 : err2;
 }
 
@@ -301,7 +301,7 @@ esp_err_t i2c_lcd1602_init(i2c_lcd1602_info_t * i2c_lcd1602_info, smbus_info_t *
         // See page 45/46 of HD44780 data sheet for the initialisation procedure.
 
         // Wait at least 40ms after power rises above 2.7V before sending commands.
-        ets_delay_us(DELAY_POWER_ON);
+        esp_rom_delay_us(DELAY_POWER_ON);
 
         err = i2c_lcd1602_reset(i2c_lcd1602_info);
     }
@@ -326,7 +326,7 @@ esp_err_t i2c_lcd1602_reset(const i2c_lcd1602_info_t * i2c_lcd1602_info)
         ESP_LOGE(TAG, "reset: _write_to_expander 1 failed: %d", last_err);
     }
 
-    ets_delay_us(1000);
+    esp_rom_delay_us(1000);
 
     // select 4-bit mode on LCD controller - see datasheet page 46, figure 24.
     if ((last_err = _write_top_nibble(i2c_lcd1602_info, 0x03 << 4)) != ESP_OK)
@@ -336,7 +336,7 @@ esp_err_t i2c_lcd1602_reset(const i2c_lcd1602_info_t * i2c_lcd1602_info)
         ESP_LOGE(TAG, "reset: _write_top_nibble 1 failed: %d", last_err);
     }
 
-    ets_delay_us(DELAY_INIT_1);
+    esp_rom_delay_us(DELAY_INIT_1);
 
     // repeat
     if ((last_err = _write_top_nibble(i2c_lcd1602_info, 0x03 << 4)) != ESP_OK)
@@ -346,7 +346,7 @@ esp_err_t i2c_lcd1602_reset(const i2c_lcd1602_info_t * i2c_lcd1602_info)
         ESP_LOGE(TAG, "reset: _write_top_nibble 2 failed: %d", last_err);
     }
 
-    ets_delay_us(DELAY_INIT_2);
+    esp_rom_delay_us(DELAY_INIT_2);
 
     // repeat
     if ((last_err = _write_top_nibble(i2c_lcd1602_info, 0x03 << 4)) != ESP_OK)
@@ -356,7 +356,7 @@ esp_err_t i2c_lcd1602_reset(const i2c_lcd1602_info_t * i2c_lcd1602_info)
         ESP_LOGE(TAG, "reset: _write_top_nibble 3 failed: %d", last_err);
     }
 
-    ets_delay_us(DELAY_INIT_3);
+    esp_rom_delay_us(DELAY_INIT_3);
 
     // select 4-bit mode
     if ((last_err = _write_top_nibble(i2c_lcd1602_info, 0x02 << 4)) != ESP_OK)
@@ -413,7 +413,7 @@ esp_err_t i2c_lcd1602_clear(const i2c_lcd1602_info_t * i2c_lcd1602_info)
         err = _write_command(i2c_lcd1602_info, COMMAND_CLEAR_DISPLAY);
         if (err == ESP_OK)
         {
-            ets_delay_us(DELAY_CLEAR_DISPLAY);
+            esp_rom_delay_us(DELAY_CLEAR_DISPLAY);
         }
     }
     return err;
@@ -427,7 +427,7 @@ esp_err_t i2c_lcd1602_home(const i2c_lcd1602_info_t * i2c_lcd1602_info)
         err = _write_command(i2c_lcd1602_info, COMMAND_RETURN_HOME);
         if (err == ESP_OK)
         {
-            ets_delay_us(DELAY_RETURN_HOME);
+            esp_rom_delay_us(DELAY_RETURN_HOME);
         }
     }
     return err;
