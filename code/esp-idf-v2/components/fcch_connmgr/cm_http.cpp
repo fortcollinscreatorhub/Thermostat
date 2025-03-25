@@ -18,6 +18,7 @@
 #include "fcch_connmgr/cm_net.h"
 #include "fcch_connmgr/cm_util.h"
 #include "cm_admin.h"
+#include "cm_app_version.h"
 #include "cm_http.h"
 #include "cm_nvs.h"
 
@@ -215,6 +216,11 @@ static void cm_http_send_action_form(
 }
 
 static void cm_http_send_page_bottom(httpd_req_t *req) {
+    httpd_resp_sendstr_chunk(req,
+        "</div>"
+        "<div class=\"ver\">");
+    httpd_resp_sendstr_chunk(req,
+        cm_app_version);
     httpd_resp_sendstr_chunk(req,
         "</div>"
         "</body>"
