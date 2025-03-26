@@ -100,30 +100,30 @@ SPDX-License-Identifier: MIT
             font-size: 1em;
         }
     </style>
+    <title>rfid-v2-test/Configuration</title>
 </head>
 <body>
-    <p class="t">rfid-v2-test - Configuration</p>
+    <p class="hn">http://rfid-v2-test.local</p>
+    <p class="pn">Configuration</p>
     <div class="bs">
-        <a class="b h" href="/foo">
-            Configuration
-        </a>
-        <a class="b h">
-            Home
-        </a>
-        <form action="/foo" method="post">
-            <label for="x">Some value:</label>
-            <input name="x" type="text" value="xxxxx" />
-            <label for="y">Another value:</label>
-            <input name="y" type="text" value="yyyyy" />
-            <button class="b h">
-                Save
-            </button>
+        <form action="/conf/w" method="POST">
+            <label for="n1">WiFi Network Name 1:</label>
+            <input name="n1" type="text" value="FCCH_WIFI"/>
+            <label for="p1">WiFi Password 1:</label>
+            <input name="p1" type="password" value="xxx"/>
+            <button class="b h">Save</button>
         </form>
-        <form action="/foo" method="post">
-            <button class="b h">
-                Reset
-            </button>
-        </form>
+        <br/>
+        <a class="b h" href="/conf/a">Admininstration</a>
+        <a class="b h" href="/conf/w">WiFi</a>
+        <a class="b h" href="/conf/mq">MQTT</a>
+        <a class="b h" href="/conf/ts">Thermostat</a>
+        <br/>
+        <a class="b h" href="/export">Export config</a>
+        <a class="b h" href="/import">Import config</a>
+        <form action="/wipe" method="post"><button class="b h">Wipe config</button></form>
+        <br/>
+        <a class="b h" href="/">Home</a>
     </div>
 </body>
 </html>
