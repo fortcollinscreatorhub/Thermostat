@@ -8,6 +8,7 @@
 #include "fcch_connmgr/cm_mqtt.h"
 #include "fcch_connmgr/cm_util.h"
 #include "mqtt.h"
+#include "whole_tenths.h"
 
 #define BLOCK_TIME (10 / portTICK_PERIOD_MS)
 
@@ -26,11 +27,16 @@ static QueueHandle_t mqtt_queue;
 static void mqtt_on_msg_send_status(mqtt_message &msg) {
     auto status = mqtt_get_status();
 
+    Whole_Tenths cur_temp_f(status.cur_temp_f);
+    Whole_Tenths target_temp_f(status.target_temp_f);
+
     AutoFree<char> data;
     asprintf(
         &data.val,
-        "{\"cur_temp_f\":\"%f\",\"target_temp_f\":\"%f\",\"heating\":%d,\"override_time_s\":%lu}",
-        status.cur_temp_f, status.target_temp_f, (int)status.heating, (uint32_t)status.override_time_s);
+        "{\"cur_temp_f\":%lu.%lu,\"target_temp_f\":%lu.%lu,\"heating\":%d,\"override_time_s\":%lu}",
+        cur_temp_f.whole, cur_temp_f.tenths,
+        target_temp_f.whole, target_temp_f.tenths,
+        (int)status.heating, (uint32_t)status.override_time_s);
     assert(data.val != NULL);
 
     cm_mqtt_publish_stat(data.val);

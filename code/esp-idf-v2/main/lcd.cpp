@@ -15,6 +15,7 @@
 #include "fcch_connmgr/cm_mqtt.h"
 #include "fcch_connmgr/cm_util.h"
 #include "lcd.h"
+#include "whole_tenths.h"
 
 #define LCD_I2C_MASTER_NUM        I2C_NUM_0
 #define LCD_I2C_MASTER_TX_BUF_LEN 0 // disabled
@@ -88,17 +89,6 @@ static void lcd_write_content() {
         ESP_ERROR_CHECK(i2c_lcd1602_write_string(lcd_dev, &lcd_content[row][0]));
     }
 }
-
-struct Whole_Tenths {
-    explicit Whole_Tenths(float f) {
-        uint32_t times_10 = (uint32_t)(f * 10);
-        whole = times_10 / 10;
-        tenths = times_10 % 10;
-    }
-
-    uint32_t whole;
-    uint32_t tenths;
-};
 
 struct Temp_F {
     explicit Temp_F(float f) : f(f) { }
