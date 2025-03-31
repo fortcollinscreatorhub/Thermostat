@@ -3,6 +3,30 @@
 This repository contains files for the custom thermostats used at the Fort
 Collins Creator Hub.
 
+# How to clone this repository
+
+This project uses git submodules, unfortunately. To clone the repository, run:
+
+```shell
+git clone --recurse-submodules https://github.com/fortcollinscreatorhub/Thermostat
+```
+
+If you wish to push back to the github repo, you probably want to clone with
+`ssh`, or edit `.git/config` to use ssh URLs after cloning, e.g.:
+
+```shell
+git clone --recurse-submodules git@github.com:fortcollinscreatorhub/Thermostat
+```
+
+Or after cloning:
+
+```shell
+vi .git/config
+```
+
+Even if you clone using the ssh URL, you'll still need to edit the remote
+definition for each submodule after the initial clone operation.
+
 ## Hardware Revisions
 
 v1 was a a breadboard-based design, using some standalone (non-WiFi)

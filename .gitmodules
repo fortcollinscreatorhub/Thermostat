@@ -1,0 +1,3 @@
+[submodule "code/esp-idf-v2/components/fcch_connmgr"]
+	path = code/esp-idf-v2/components/fcch_connmgr
+	url = https://github.com/fortcollinscreatorhub/fcch_connmgr-esp-idf.git
