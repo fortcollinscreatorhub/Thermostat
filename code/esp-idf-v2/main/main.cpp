@@ -177,6 +177,22 @@ void buttons_on_click(buttons_id id) {
     assert(xQueueSend(main_queue, &msg, BLOCK_TIME) == pdTRUE);
 }
 
+static void main_http_action_button_start() {
+    buttons_on_click(BUTTONS_ID_START);
+}
+
+static const char *main_http_action_button_start_description() {
+    return "Override Start";
+}
+
+static void main_http_action_button_cancel() {
+    buttons_on_click(BUTTONS_ID_CANCEL);
+}
+
+static const char *main_http_action_button_cancel_description() {
+    return "Override Cancel";
+}
+
 void thermometer_on_error() {
     main_thermostat_errors++;
     assert(main_thermostat_errors < 10);
@@ -336,6 +352,16 @@ extern "C" void app_main(void) {
     main_task_init();
     lcd_init();
     buttons_init();
+    cm_http_register_home_action(
+        "button-start",
+        main_http_action_button_start_description,
+        main_http_action_button_start
+    );
+    cm_http_register_home_action(
+        "button-cancel",
+        main_http_action_button_cancel_description,
+        main_http_action_button_cancel
+    );
     thermometer_init();
     if (cm_mqtt_status_period) {
         mqtt_init();
