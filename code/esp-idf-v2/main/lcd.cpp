@@ -240,7 +240,9 @@ static void lcd_draw_page_thermostat() {
     row0 << Temp_F(thermostat_info.target_temp_f);
 
     LineWriter row1(1);
-    if (thermostat_info.override_time_s) {
+    if (thermostat_info.force_heat) {
+        row1 << "FORCE ON";
+    } else if (thermostat_info.override_time_s) {
         row1 << "Override ";
         row1 << Seconds(thermostat_info.override_time_s);
     } else {

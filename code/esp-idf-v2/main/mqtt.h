@@ -8,6 +8,7 @@ struct mqtt_status {
     float target_temp_f;
     bool heating;
     uint16_t override_time_s;
+    bool force_heat;
 };
 
 extern void mqtt_init();

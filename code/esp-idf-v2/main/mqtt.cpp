@@ -33,10 +33,11 @@ static void mqtt_on_msg_send_status(mqtt_message &msg) {
     AutoFree<char> data;
     asprintf(
         &data.val,
-        "{\"cur_temp_f\":%lu.%lu,\"target_temp_f\":%lu.%lu,\"heating\":%d,\"override_time_s\":%lu}",
+        "{\"cur_temp_f\":%lu.%lu,\"target_temp_f\":%lu.%lu,\"heating\":%d,\"override_time_s\":%lu,\"force_heat\":%d}",
         cur_temp_f.whole, cur_temp_f.tenths,
         target_temp_f.whole, target_temp_f.tenths,
-        (int)status.heating, (uint32_t)status.override_time_s);
+        (int)status.heating, (uint32_t)status.override_time_s,
+        status.force_heat);
     assert(data.val != NULL);
 
     cm_mqtt_publish_stat(data.val);

@@ -27,6 +27,7 @@ enum main_message_id {
     MAIN_MESSAGE_TIMER,
     MAIN_MESSAGE_BUTTON,
     MAIN_MESSAGE_TEMP_F,
+    MAIN_MESSAGE_EVALUATE_HEATING
 };
 
 struct main_message {
@@ -44,6 +45,7 @@ static QueueHandle_t main_queue;
 static TimerHandle_t main_1s_timer;
 static uint32_t main_thermostat_errors;
 static uint32_t main_ticks_since_temp_request = TICKS_PER_TEMP_REQUEST;
+static bool main_force_heat;
 static uint16_t main_override_time_left;
 static uint16_t main_mqtt_time_left;
 static bool main_heating_on;
@@ -162,11 +164,11 @@ static cm_conf_page main_conf_page = {
 };
 
 lcd_thermostat_info lcd_get_thermostat_info() {
-    return {main_last_temp_f, main_target_temp_f, main_override_time_left};
+    return {main_last_temp_f, main_target_temp_f, main_override_time_left, main_force_heat};
 }
 
 mqtt_status mqtt_get_status() {
-    return {main_last_temp_f, main_target_temp_f, main_heating_on, main_override_time_left};
+    return {main_last_temp_f, main_target_temp_f, main_heating_on, main_override_time_left, main_force_heat};
 }
 
 void buttons_on_click(buttons_id id) {
@@ -191,6 +193,24 @@ static void main_http_action_button_cancel() {
 
 static const char *main_http_action_button_cancel_description() {
     return "Override Cancel";
+}
+
+static void main_http_action_force_heat_toggle() {
+    main_force_heat = !main_force_heat;
+
+    main_message msg{
+        .id = MAIN_MESSAGE_EVALUATE_HEATING,
+        .none = 0,
+    };
+    assert(xQueueSend(main_queue, &msg, BLOCK_TIME) == pdTRUE);
+}
+
+static const char *main_http_action_force_heat_toggle_description() {
+    if (main_force_heat) {
+        return "Force Heat (Is On)";
+    } else {
+        return "Force Heat (Is Off)";
+    }
 }
 
 void thermometer_on_error() {
@@ -258,6 +278,8 @@ static void main_evaluate_heating() {
         if (main_last_temp_f <= main_target_temp_f - hysteresis_low)
             new_main_heating_on = true;
     }
+    if (main_force_heat)
+        new_main_heating_on = true;
 
     main_heating_on = new_main_heating_on;
     ESP_ERROR_CHECK(gpio_set_level(MAIN_GPIO_RELAY, main_heating_on));
@@ -303,6 +325,10 @@ static void main_on_msg_temp_f(const main_message &msg) {
     lcd_on_thermostat_change();
 }
 
+static void main_on_msg_evaluate_heating(const main_message &/*msg*/) {
+    main_evaluate_heating();
+}
+
 static void main_task(void *pvParameters) {
     for (;;) {
         main_message msg;
@@ -317,6 +343,9 @@ static void main_task(void *pvParameters) {
             break;
         case MAIN_MESSAGE_TEMP_F:
             main_on_msg_temp_f(msg);
+            break;
+        case MAIN_MESSAGE_EVALUATE_HEATING:
+            main_on_msg_evaluate_heating(msg);
             break;
         default:
             ESP_LOGE(TAG, "Unknown message: %d", (int)msg.id);
@@ -361,6 +390,11 @@ extern "C" void app_main(void) {
         "button-cancel",
         main_http_action_button_cancel_description,
         main_http_action_button_cancel
+    );
+    cm_http_register_home_action(
+        "toggle-force-heat",
+        main_http_action_force_heat_toggle_description,
+        main_http_action_force_heat_toggle
     );
     thermometer_init();
     if (cm_mqtt_status_period) {

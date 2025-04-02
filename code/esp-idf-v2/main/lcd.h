@@ -9,6 +9,7 @@ struct lcd_thermostat_info {
     float cur_temp_f;
     float target_temp_f;
     uint16_t override_time_s;
+    bool force_heat;
 };
 
 extern void lcd_init();
