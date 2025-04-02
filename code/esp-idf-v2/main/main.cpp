@@ -51,62 +51,60 @@ static bool main_heating_on;
 static float main_last_temp_f;
 static float main_target_temp_f;
 
-static void main_item_val_default_u16_1(cm_conf_item * /*item*/, cm_conf_p_val p_val_u) {
-    *p_val_u.u16 = 1;
+static void main_item_val_default_f_1(cm_conf_item * /*item*/, cm_conf_p_val p_val_u) {
+    *p_val_u.f = 1;
 }
 
-static void main_item_val_default_u16_3(cm_conf_item * /*item*/, cm_conf_p_val p_val_u) {
-    *p_val_u.u16 = 3;
+static void main_item_val_default_f_3(cm_conf_item * /*item*/, cm_conf_p_val p_val_u) {
+    *p_val_u.f = 3;
 }
 
-static void main_item_val_default_u16_50(cm_conf_item * /*item*/, cm_conf_p_val p_val_u) {
-    *p_val_u.u16 = 50;
+static void main_item_val_default_f_50(cm_conf_item * /*item*/, cm_conf_p_val p_val_u) {
+    *p_val_u.f = 50;
 }
 
-static void main_item_val_default_u16_70(cm_conf_item * /*item*/, cm_conf_p_val p_val_u) {
-    *p_val_u.u16 = 70;
+static void main_item_val_default_f_70(cm_conf_item * /*item*/, cm_conf_p_val p_val_u) {
+    *p_val_u.f = 70;
 }
 
 static void main_item_val_default_u16_2h_in_s(cm_conf_item * /*item*/, cm_conf_p_val p_val_u) {
     *p_val_u.u16 = 2 * 60 * 60;
 }
 
-// FIXME: Should most of these be float?
-// FIXME: Should be signed?
-static uint16_t main_item_val_sensor_offset;
+static float main_item_val_sensor_offset;
 static cm_conf_item main_item_sensor_offset = {
     .slug_name = "so", // Sensor Offset
     .text_name = "Sensor Offset",
-    .type = CM_CONF_ITEM_TYPE_U16,
-    .p_val = {.u16 = &main_item_val_sensor_offset },
-    .default_func = &cm_conf_default_u16_0,
+    .type = CM_CONF_ITEM_TYPE_FLOAT,
+    .p_val = {.f = &main_item_val_sensor_offset },
+    .default_func = &cm_conf_default_f_0,
 };
 
-static uint16_t main_item_val_fallback_target_temp_f;
+static float main_item_val_fallback_target_temp_f;
 static cm_conf_item main_item_fallback_target_temp_f = {
     .slug_name = "ftt", // Fallback Target Temp
     .text_name = "Fallback Target Temperature",
-    .type = CM_CONF_ITEM_TYPE_U16,
-    .p_val = {.u16 = &main_item_val_fallback_target_temp_f },
-    .default_func = &main_item_val_default_u16_50,
+    .type = CM_CONF_ITEM_TYPE_FLOAT,
+    .p_val = {.f = &main_item_val_fallback_target_temp_f },
+    .default_func = &main_item_val_default_f_50,
 };
 
-static uint16_t main_item_val_fallback_hysteresis_low;
+static float main_item_val_fallback_hysteresis_low;
 static cm_conf_item main_item_fallback_hysteresis_low = {
     .slug_name = "fhl", // Fallback Hysteresis Low
     .text_name = "Fallback Hysteresis Offset Low",
-    .type = CM_CONF_ITEM_TYPE_U16,
-    .p_val = {.u16 = &main_item_val_fallback_hysteresis_low },
-    .default_func = &main_item_val_default_u16_3,
+    .type = CM_CONF_ITEM_TYPE_FLOAT,
+    .p_val = {.f = &main_item_val_fallback_hysteresis_low },
+    .default_func = &main_item_val_default_f_3,
 };
 
-static uint16_t main_item_val_fallback_hysteresis_high;
+static float main_item_val_fallback_hysteresis_high;
 static cm_conf_item main_item_fallback_hysteresis_high = {
     .slug_name = "fhh", // Fallback Hysteresis Offset High
     .text_name = "Fallback Hysteresis High",
-    .type = CM_CONF_ITEM_TYPE_U16,
-    .p_val = {.u16 = &main_item_val_fallback_hysteresis_high },
-    .default_func = &main_item_val_default_u16_1,
+    .type = CM_CONF_ITEM_TYPE_FLOAT,
+    .p_val = {.f = &main_item_val_fallback_hysteresis_high },
+    .default_func = &main_item_val_default_f_1,
 };
 
 static uint16_t main_item_val_override_duration;
@@ -118,31 +116,31 @@ static cm_conf_item main_item_override_duration = {
     .default_func = &main_item_val_default_u16_2h_in_s,
 };
 
-static uint16_t main_item_val_override_target_temp_f;
+static float main_item_val_override_target_temp_f;
 static cm_conf_item main_item_override_target_temp_f = {
     .slug_name = "ott", // Override Target Temp
     .text_name = "Override Target Temperature",
-    .type = CM_CONF_ITEM_TYPE_U16,
-    .p_val = {.u16 = &main_item_val_override_target_temp_f },
-    .default_func = &main_item_val_default_u16_70,
+    .type = CM_CONF_ITEM_TYPE_FLOAT,
+    .p_val = {.f = &main_item_val_override_target_temp_f },
+    .default_func = &main_item_val_default_f_70,
 };
 
-static uint16_t main_item_val_override_hysteresis_low;
+static float main_item_val_override_hysteresis_low;
 static cm_conf_item main_item_override_hysteresis_low = {
     .slug_name = "ohl", // Override Hysteresis Low
     .text_name = "Override Hysteresis Offset Low",
-    .type = CM_CONF_ITEM_TYPE_U16,
-    .p_val = {.u16 = &main_item_val_override_hysteresis_low },
-    .default_func = &main_item_val_default_u16_3,
+    .type = CM_CONF_ITEM_TYPE_FLOAT,
+    .p_val = {.f = &main_item_val_override_hysteresis_low },
+    .default_func = &main_item_val_default_f_3,
 };
 
-static uint16_t main_item_val_override_hysteresis_high;
+static float main_item_val_override_hysteresis_high;
 static cm_conf_item main_item_override_hysteresis_high = {
     .slug_name = "ohh", // Override Hysteresis High
     .text_name = "Override Hysteresis Offset High",
-    .type = CM_CONF_ITEM_TYPE_U16,
-    .p_val = {.u16 = &main_item_val_override_hysteresis_high },
-    .default_func = &main_item_val_default_u16_1,
+    .type = CM_CONF_ITEM_TYPE_FLOAT,
+    .p_val = {.f = &main_item_val_override_hysteresis_high },
+    .default_func = &main_item_val_default_f_1,
 };
 
 static cm_conf_item *main_items[] = {
@@ -284,8 +282,7 @@ static void main_on_msg_button(const main_message &msg) {
 }
 
 static void main_on_msg_temp_f(const main_message &msg) {
-    // FIXME: s/-/+/ when value becomes signed.
-    main_last_temp_f = msg.temp_f - main_item_val_sensor_offset;
+    main_last_temp_f = msg.temp_f + main_item_val_sensor_offset;
     main_evaluate_heating();
     lcd_on_thermostat_change();
 }
