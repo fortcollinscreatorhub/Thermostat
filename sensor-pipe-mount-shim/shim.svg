@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="8.2677164in"
+   height="11.692913in"
+   viewBox="0 0 210 296.99999"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   sodipodi:docname="shim.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="in"
+     showgrid="false"
+     inkscape:zoom="2.2990593"
+     inkscape:cx="242.273"
+     inkscape:cy="269.89299"
+     inkscape:window-width="1920"
+     inkscape:window-height="1032"
+     inkscape:window-x="0"
+     inkscape:window-y="25"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <circle
+       style="vector-effect:non-scaling-stroke;fill:none;stroke:#000000;stroke-width:0.204954;stroke-linejoin:round;-inkscape-stroke:hairline"
+       id="path234"
+       cx="48.523369"
+       cy="68.015694"
+       r="10.5" />
+    <circle
+       style="vector-effect:non-scaling-stroke;fill:none;stroke:#000000;stroke-width:0.273273;stroke-linejoin:round;-inkscape-stroke:hairline"
+       id="circle344"
+       cx="48.523369"
+       cy="67.731094"
+       r="14" />
+    <rect
+       style="vector-effect:non-scaling-stroke;fill:none;stroke:#000000;stroke-width:0.240434;stroke-linejoin:round;-inkscape-stroke:hairline"
+       id="rect398"
+       width="28"
+       height="14"
+       x="34.523369"
+       y="67.731094" />
+    <rect
+       style="vector-effect:non-scaling-stroke;fill:none;stroke:#000000;stroke-width:0.208221;stroke-linejoin:round;-inkscape-stroke:hairline"
+       id="rect423"
+       width="21"
+       height="14"
+       x="38.023369"
+       y="67.731094" />
+    <path
+       id="circle294"
+       style="vector-effect:non-scaling-stroke;fill:none;stroke:#000000;stroke-width:0.273273;stroke-linejoin:round;-inkscape-stroke:hairline"
+       d="M 101.4398 53.731086 A 14 14 0 0 0 87.44014 67.731265 L 87.44014 81.730927 L 90.940184 81.730927 L 90.940184 68.015486 L 90.940184 67.731265 L 90.95052 67.731265 A 10.5 10.5 0 0 1 101.4398 57.515868 A 10.5 10.5 0 0 1 111.9358 67.731265 L 111.93994 67.731265 L 111.93994 68.015486 L 111.93994 81.730927 L 115.43998 81.730927 L 115.43998 67.731265 A 14 14 0 0 0 101.4398 53.731086 z " />
+  </g>
+</svg>
